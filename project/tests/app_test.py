@@ -80,3 +80,22 @@ def test_delete_message(client):
     rv = client.get('/delete/1')
     data = json.loads(rv.data)
     assert data["status"] == 1
+
+def test_basic_search(client):
+    """Ensure basic search functionality works."""
+
+
+    login(client, app.config["USERNAME"], app.config["PASSWORD"])
+
+    entry = {"title": "SearchTestTitle", "text": "SearchTestText"}
+    client.post("/add", data=entry, follow_redirects=True)
+
+    rv = client.get("/search/?query=SearchTestTitle", follow_redirects=True)
+    assert b"SearchTestTitle" in rv.data
+
+    rv = client.get("/search/?query=SearchTestText", follow_redirects=True)
+    assert b"SearchTestText" in rv.data
+
+    rv = client.get("/search/?query=nonexistent", follow_redirects=True)
+    assert b"SearchTestTitle" not in rv.data
+    assert b"SearchTestText" not in rv.data
