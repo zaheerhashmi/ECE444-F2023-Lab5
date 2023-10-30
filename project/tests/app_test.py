@@ -20,6 +20,7 @@ def client():
         yield app.test_client()  # tests run here
         db.drop_all()  # teardown
 
+
 def login(client, username, password):
     """Login helper function"""
     return client.post(
@@ -75,6 +76,7 @@ def test_messages(client):
     assert b"&lt;Hello&gt;" in rv.data
     assert b"<strong>HTML</strong> allowed here" in rv.data
 
+
 def test_delete_message(client):
     """Ensure the messages are being deleted"""
     rv = client.get("/delete/1")
@@ -84,6 +86,7 @@ def test_delete_message(client):
     rv = client.get("/delete/1")
     data = json.loads(rv.data)
     assert data["status"] == 1
+
 
 def test_basic_search(client):
     """Ensure basic searching works"""
@@ -99,8 +102,8 @@ def test_basic_search(client):
     assert b"SearchTestTitle" not in rv.data
     assert b"SearchTestText" not in rv.data
 
+
 def test_required_login(client):
-    
     login(client, app.config["USERNAME"], app.config["PASSWORD"])
     entry = {"title": "LoginTestTitle", "text": "LoginTestText"}
     client.post("/add", data=entry, follow_redirects=True)
